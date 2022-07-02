@@ -57,13 +57,9 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
         // Look for vertical lines
         // Get the the column for each row index
         for (let x = 0; x < matrix[0].length; x++) {
-            const column = Array<SquareModel>(matrix.length)
-            // Convert the column to an array
-            for (let y = 0; y < matrix.length; y++) {
-                column[y] = matrix[y][x]
-                if (this.allCheckedFromSamePlayer(column)) {
-                    return column[0].player
-                }
+            const column = MatrixUtils.columnToArray(matrix, x)
+            if (this.allCheckedFromSamePlayer(column)) {
+                return column[0].player
             }
         }
 
