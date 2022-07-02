@@ -3,16 +3,13 @@ import { Player } from "../../model/Player";
 import './TicTacToeSquare.scss';
 
 type TicTacToeSquareProps = {
-    onSquareClicked: () => Player
+    onSquareClicked: () => void
     x: number
     y: number
-}
-
-type TicTacToeSquareState = {
     checked?: Player
 }
 
-class TicTacToeSquare extends React.Component<TicTacToeSquareProps, TicTacToeSquareState> {
+class TicTacToeSquare extends React.Component<TicTacToeSquareProps> {
 
     constructor(props: TicTacToeSquareProps) {
         super(props)
@@ -22,17 +19,13 @@ class TicTacToeSquare extends React.Component<TicTacToeSquareProps, TicTacToeSqu
     render() {
         return (
             <button className="TicTacToeSquare" onClick={ () => this.onClick() }>
-                { this.state.checked }
+                { this.props.checked }
             </button>
         )
     }
 
     private onClick() {
-        if (this.state.checked === undefined) {
-            this.setState({
-                checked: this.props.onSquareClicked()
-            })   
-        }
+        this.props.onSquareClicked()
     }
 }
 

@@ -4,39 +4,51 @@ import TicTacToeSquare from "../TicTacToeSquare/TicTacToeSquare"
 import { Player } from "../../model/Player";
 
 type BoardState = {
-    player: Player
+    currentPlayer: Player,
+    board: Player[][]
 }
 
 class TicTacToeBoard extends React.Component<any, BoardState> {
 
+    private static readonly BOARD_SIZE = 3
+
     constructor(props: any) {
         super(props)
         this.state = {
-            player: Player.X
+            currentPlayer: Player.X,
+            board: TicTacToeBoard.createMatrix(TicTacToeBoard.BOARD_SIZE, TicTacToeBoard.BOARD_SIZE)
         }
     }
 
     renderSquare(x: number, y: number) {
-        return <TicTacToeSquare x={ x } y={ y } onSquareClicked={ () => this.onSquareClicked() } />;
+        return <TicTacToeSquare x={ x } y={ y } checked={ this.state.board[y][x] } onSquareClicked={ () => this.onSquareClicked(x, y) } />;
     }
 
-    private onSquareClicked(): Player {
-        const currentPlayer = this.state.player
+    private onSquareClicked(x: number, y: number): void {
+        this.state.board[y][x] = this.state.currentPlayer
         // Set next player
         this.setState({
-            player: this.flipPlayer(currentPlayer)
+            currentPlayer: this.flipPlayer(this.state.currentPlayer),
+            board: this.state.board
         })
-        return currentPlayer
     }
 
     private flipPlayer(player: Player): Player {
-        return player == Player.O ? Player.X : Player.O
+        return player === Player.O ? Player.X : Player.O
+    }
+
+    static createMatrix<T>(columns: number, rows: number): T[][] {
+        const matrix = Array<T[]>(columns)
+        for (let i = 0; i < matrix.length; i++) {
+            matrix[i] = Array<T>(rows)
+        }
+        return matrix
     }
     
     render() {
         return (
         <div className="TicTacToeBoard">
-            <div className="status">Next player: { this.state.player }</div>
+            <div className="status">Next player: { this.state.currentPlayer }</div>
             <div className="row">
             {this.renderSquare(0, 0)}
             {this.renderSquare(1, 0)}
@@ -45,7 +57,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             <div className="row">
             {this.renderSquare(0, 1)}
             {this.renderSquare(1, 1)}
-            {this.renderSquare(2, 2)}
+            {this.renderSquare(2, 1)}
             </div>
             <div className="row">
             {this.renderSquare(0, 2)}
