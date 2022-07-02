@@ -16,5 +16,11 @@
         clear: both;
         content: "";
         display: table;
-      }
+    }
+
+    .winner {
+        @extend .status;
+        color: green;
+        font-weight: bold;
+    }
 }
