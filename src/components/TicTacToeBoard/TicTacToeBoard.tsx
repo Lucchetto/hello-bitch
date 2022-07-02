@@ -3,10 +3,12 @@ import './TicTacToeBoard.scss';
 import TicTacToeSquare from "../TicTacToeSquare/TicTacToeSquare"
 import { Player } from "../../model/Player";
 import { MatrixUtils } from "../../utils/MatrixUtils";
+import { SquareModel } from "../../model/SquareModel";
+import { ArrayUtils } from "../../utils/ArrayUtils";
 
 type BoardState = {
     currentPlayer: Player,
-    board: Player[][],
+    board: SquareModel[][],
     winner?: Player,
 }
 
@@ -23,7 +25,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     }
 
     renderSquare(x: number, y: number) {
-        return <TicTacToeSquare x={ x } y={ y } checked={ this.state.board[y][x] } onSquareClicked={ () => this.onSquareClicked(x, y) } />;
+        return <TicTacToeSquare x={ x } y={ y } checked={ this.state.board[y][x]?.player } onSquareClicked={ () => this.onSquareClicked(x, y) } />;
     }
 
     private onSquareClicked(x: number, y: number): void {
@@ -31,7 +33,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             return  
         }
         
-        this.state.board[y][x] = this.state.currentPlayer
+        this.state.board[y][x] = { player: this.state.currentPlayer }
         // Set next player
         this.setState({
             currentPlayer: this.flipPlayer(this.state.currentPlayer),
@@ -44,48 +46,40 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
         return player === Player.O ? Player.X : Player.O
     }
 
-    private static getWinningPlayer(matrix: Player[][]): Player | undefined {
+    private static getWinningPlayer(matrix: SquareModel[][]): Player | undefined {
         // Look for horizontal lines
         for (const row of matrix) {
-            if (this.allItemsSame(row)) {
-                return row[0]
+            if (this.allCheckedFromSamePlayer(row)) {
+                return row[0].player
             }
         }
 
         // Look for vertical lines
         // Get the the column for each row index
         for (let x = 0; x < matrix[0].length; x++) {
-            const column = Array(matrix.length)
+            const column = Array<SquareModel>(matrix.length)
             // Convert the column to an array
             for (let y = 0; y < matrix.length; y++) {
                 column[y] = matrix[y][x]
-                if (this.allItemsSame(column)) {
-                    return column[0]
+                if (this.allCheckedFromSamePlayer(column)) {
+                    return column[0].player
                 }
             }
         }
 
         // Look for diagonals
-        if (this.allItemsSame(MatrixUtils.getDiagonal(matrix))) {
-            return matrix[0][0]
+        if (this.allCheckedFromSamePlayer(MatrixUtils.getDiagonal(matrix))) {
+            return matrix[0][0].player
         }
-        if (this.allItemsSame(MatrixUtils.getDiagonal(matrix, true))) {
-            return matrix[0][matrix[0].length - 1]
+        if (this.allCheckedFromSamePlayer(MatrixUtils.getDiagonal(matrix, true))) {
+            return matrix[0][matrix[0].length - 1].player
         }
 
         return undefined
     }
 
-    private static allItemsSame<T>(array: T[]): boolean {
-        for (let i = 1; i < array.length; i++) {
-            // Return false if an item non equal to the previous one is found
-            if (array[i - 1] !== array[i]) {
-                return false
-            }
-        }
-        
-        // Return true if this is not an array of undefined items
-        return array[0] !== undefined
+    private static allCheckedFromSamePlayer(array: SquareModel[]): boolean {
+        return ArrayUtils.allItemsSame(array, (a, b) => a?.player === b?.player)
     }
 
     static createMatrix<T>(columns: number, rows: number): T[][] {
