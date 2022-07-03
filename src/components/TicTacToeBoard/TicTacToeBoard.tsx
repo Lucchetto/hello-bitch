@@ -98,11 +98,34 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             }
         }
 
+        // Check if it's a tie
+        if (TicTacToeBoard.checkTie(matrix)) {
+            return {}
+        }
+
         return undefined
     }
 
     private static allCheckedFromSamePlayer(array: SquareModel[]): boolean {
         return ArrayUtils.allItemsSame(array, (a, b) => a?.player === b?.player)
+    }
+
+    /**
+     * Check if the game is a tie for a given board
+     * 
+     * @param matrix the board to check
+     * @returns whether the game is a tie
+     */
+    private static checkTie(matrix: SquareModel[][]): boolean {
+        for (let row of matrix) {
+            for (let item of row) {
+                if (item?.player === undefined) {
+                    return false
+                }
+            }
+        }
+
+        return true
     }
 
     private static createIntialState(): BoardState {
@@ -124,7 +147,14 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     render() {
         return (
         <div className="TicTacToeBoard">
-            { this.state.winner ? <div className="winner">{ this.state.winner.player } won this match</div> : <div className="status">Next player: { this.state.currentPlayer }</div> }
+            { this.state.winner ?
+                this.state.winner.player === undefined ?
+                    <div className="tie">It's a tie</div>
+                :
+                    <div className="winner">{ this.state.winner.player } won this match</div> 
+            :
+                <div className="status">Next player: { this.state.currentPlayer }</div>
+            }
             <div className="row">
             {this.renderSquare(0, 0)}
             {this.renderSquare(1, 0)}
