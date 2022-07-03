@@ -108,7 +108,8 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     private static createIntialState(): BoardState {
         return {
             currentPlayer: Player.X,
-            board: TicTacToeBoard.createMatrix(TicTacToeBoard.BOARD_SIZE, TicTacToeBoard.BOARD_SIZE)
+            board: TicTacToeBoard.createMatrix(TicTacToeBoard.BOARD_SIZE, TicTacToeBoard.BOARD_SIZE),
+            winner: undefined,
         }
     }
 
