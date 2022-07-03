@@ -19,10 +19,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
 
     constructor(props: any) {
         super(props)
-        this.state = {
-            currentPlayer: Player.X,
-            board: TicTacToeBoard.createMatrix(TicTacToeBoard.BOARD_SIZE, TicTacToeBoard.BOARD_SIZE)
-        }
+        this.state = TicTacToeBoard.createIntialState()
     }
 
     renderSquare(x: number, y: number) {
@@ -45,6 +42,10 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
 
     private flipPlayer(player: Player): Player {
         return player === Player.O ? Player.X : Player.O
+    }
+
+    private startNewGame() {
+        this.setState(TicTacToeBoard.createIntialState())
     }
 
     private static getWinningPlayer(matrix: SquareModel[][]): WinnerModel | undefined {
@@ -104,6 +105,13 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
         return ArrayUtils.allItemsSame(array, (a, b) => a?.player === b?.player)
     }
 
+    private static createIntialState(): BoardState {
+        return {
+            currentPlayer: Player.X,
+            board: TicTacToeBoard.createMatrix(TicTacToeBoard.BOARD_SIZE, TicTacToeBoard.BOARD_SIZE)
+        }
+    }
+
     static createMatrix<T>(columns: number, rows: number): T[][] {
         const matrix = Array<T[]>(columns)
         for (let i = 0; i < matrix.length; i++) {
@@ -131,6 +139,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             {this.renderSquare(1, 2)}
             {this.renderSquare(2, 2)}
             </div>
+            { this.state.winner && <button onClick={ () => this.startNewGame() }>Play again</button> }
         </div>
         );
     }
