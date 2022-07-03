@@ -69,7 +69,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             const column = MatrixUtils.columnToArray(matrix, x)
             if (this.allCheckedFromSamePlayer(column)) {
                 // Mark all squares in the column as winning
-                for (let y = 0; x < column.length; x++) {
+                for (let y = 0; y < column.length; y++) {
                     matrix[y][x].winningSquare = true
                 }
                 return {
