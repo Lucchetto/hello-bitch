@@ -27,8 +27,8 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     }
 
     private onSquareClicked(x: number, y: number): void {
-        if (this.state.winner !== undefined) { 
-            return  
+        if (this.state.winner !== undefined || this.state.board[y][x] !== undefined) { 
+            return
         }
         
         this.state.board[y][x] = { player: this.state.currentPlayer }

@@ -11,14 +11,10 @@ class TicTacToeSquare extends React.Component<TicTacToeSquareProps> {
 
     render() {
         return (
-            <button className={`TicTacToeSquare ${this.props.model?.winningSquare ? "winning" : ""}`} onClick={ () => this.onClick() }>
+            <button className={`TicTacToeSquare ${this.props.model?.winningSquare ? "winning" : ""}`} onClick={ () => this.props.onSquareClicked() }>
                 { this.props.model?.player }
             </button>
         )
-    }
-
-    private onClick() {
-        this.props.onSquareClicked()
     }
 }
 
