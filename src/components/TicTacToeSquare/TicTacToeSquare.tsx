@@ -1,25 +1,18 @@
 import React from "react";
-import { Player } from "../../model/Player";
+import { SquareModel } from "../../model/SquareModel";
 import './TicTacToeSquare.scss';
 
 type TicTacToeSquareProps = {
     onSquareClicked: () => void
-    x: number
-    y: number
-    checked?: Player
+    model?: SquareModel
 }
 
 class TicTacToeSquare extends React.Component<TicTacToeSquareProps> {
 
-    constructor(props: TicTacToeSquareProps) {
-        super(props)
-        this.state = {}
-    }
-
     render() {
         return (
-            <button className="TicTacToeSquare" onClick={ () => this.onClick() }>
-                { this.props.checked }
+            <button className={`TicTacToeSquare ${this.props.model?.winningSquare ? "winning" : ""}`} onClick={ () => this.onClick() }>
+                { this.props.model?.player }
             </button>
         )
     }

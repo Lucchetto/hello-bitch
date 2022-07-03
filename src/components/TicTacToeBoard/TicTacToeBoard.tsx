@@ -5,11 +5,12 @@ import { Player } from "../../model/Player";
 import { MatrixUtils } from "../../utils/MatrixUtils";
 import { SquareModel } from "../../model/SquareModel";
 import { ArrayUtils } from "../../utils/ArrayUtils";
+import { WinnerModel } from "../../model/WinnerModel";
 
 type BoardState = {
     currentPlayer: Player,
     board: SquareModel[][],
-    winner?: Player,
+    winner?: WinnerModel,
 }
 
 class TicTacToeBoard extends React.Component<any, BoardState> {
@@ -25,7 +26,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     }
 
     renderSquare(x: number, y: number) {
-        return <TicTacToeSquare x={ x } y={ y } checked={ this.state.board[y][x]?.player } onSquareClicked={ () => this.onSquareClicked(x, y) } />;
+        return <TicTacToeSquare model={ this.state.board[y][x] } onSquareClicked={ () => this.onSquareClicked(x, y) } />;
     }
 
     private onSquareClicked(x: number, y: number): void {
@@ -46,11 +47,18 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
         return player === Player.O ? Player.X : Player.O
     }
 
-    private static getWinningPlayer(matrix: SquareModel[][]): Player | undefined {
+    private static getWinningPlayer(matrix: SquareModel[][]): WinnerModel | undefined {
         // Look for horizontal lines
-        for (const row of matrix) {
+        for (let y = 0; y < matrix.length; y++) {
+            const row = matrix[y]
             if (this.allCheckedFromSamePlayer(row)) {
-                return row[0].player
+                // Mark all squares in the row as winning
+                for (let x = 0; x < row.length; x++) {
+                    matrix[y][x].winningSquare = true
+                }
+                return {
+                    player: row[0].player!,
+                }
             }
         }
 
@@ -59,16 +67,34 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
         for (let x = 0; x < matrix[0].length; x++) {
             const column = MatrixUtils.columnToArray(matrix, x)
             if (this.allCheckedFromSamePlayer(column)) {
-                return column[0].player
+                // Mark all squares in the column as winning
+                for (let y = 0; x < column.length; x++) {
+                    matrix[y][x].winningSquare = true
+                }
+                return {
+                    player: column[0].player!,
+                }
             }
         }
 
         // Look for diagonals
         if (this.allCheckedFromSamePlayer(MatrixUtils.getDiagonal(matrix))) {
-            return matrix[0][0].player
+            // Mark all squares in the diagonal as winning
+            for (let i = 0; i < matrix.length; i++) {
+                matrix[i][i].winningSquare = true
+            }
+            return {
+                player: matrix[0][0].player!,
+            }
         }
         if (this.allCheckedFromSamePlayer(MatrixUtils.getDiagonal(matrix, true))) {
-            return matrix[0][matrix[0].length - 1].player
+            // Mark all squares in the diagonal as winning
+            for (let i = 0; i < matrix.length; i++) {
+                matrix[i][matrix.length - 1 - i].winningSquare = true
+            }
+            return {
+                player: matrix[0][matrix[0].length - 1].player!,
+            }
         }
 
         return undefined
@@ -89,7 +115,7 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
     render() {
         return (
         <div className="TicTacToeBoard">
-            { this.state.winner ? <div className="winner">{ this.state.winner } won this match</div> : <div className="status">Next player: { this.state.currentPlayer }</div> }
+            { this.state.winner ? <div className="winner">{ this.state.winner.player } won this match</div> : <div className="status">Next player: { this.state.currentPlayer }</div> }
             <div className="row">
             {this.renderSquare(0, 0)}
             {this.renderSquare(1, 0)}
