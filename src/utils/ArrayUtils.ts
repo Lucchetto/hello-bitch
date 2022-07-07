@@ -27,4 +27,21 @@ export class ArrayUtils {
         // Return true if this is not an array of undefined items
         return array[0] !== undefined
     }
+
+    /**
+     * Deep clone an one dimensional or multidimensional array
+     * 
+     * @param source the array to clone
+     * @returns the cloned array
+     */
+    static deepCloneArray(source: any[]): any[] {
+        return source.map((item) => {
+            // Clone child array recursively if necessary
+            if (item instanceof Array) {
+                return this.deepCloneArray(item)
+            } else {
+                return Object.assign({}, item)
+            }
+        })
+    }
 }

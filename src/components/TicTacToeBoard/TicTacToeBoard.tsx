@@ -31,12 +31,13 @@ class TicTacToeBoard extends React.Component<any, BoardState> {
             return
         }
         
-        this.state.board[y][x] = { player: this.state.currentPlayer }
+        const updatedBoard: SquareModel[][] = ArrayUtils.deepCloneArray(this.state.board)
+        updatedBoard[y][x] = { player: this.state.currentPlayer }
         // Set next player
         this.setState({
             currentPlayer: this.flipPlayer(this.state.currentPlayer),
-            board: this.state.board,
-            winner: TicTacToeBoard.getWinningPlayer(this.state.board)
+            board: updatedBoard,
+            winner: TicTacToeBoard.getWinningPlayer(updatedBoard)
         })
     }
 
